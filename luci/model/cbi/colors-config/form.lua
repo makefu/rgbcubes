@@ -1,7 +1,7 @@
-m = Map("colors","")
+m = Map("colors","Configure RGB Cube Colors")
 
-s = m:section(TypedSection,"colors","")
-
+s = m:section(TypedSection,"colors","")                         
+s.anonymous=true
 s:option(Flag,"enabled","LEDs enabled").rmempty=false
 
 p = s:option(ListValue,"mode","Current Mode")
