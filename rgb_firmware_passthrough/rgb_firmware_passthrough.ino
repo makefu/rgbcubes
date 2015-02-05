@@ -4,7 +4,7 @@
 
 #define DATA_PIN 3
 // RCSwitch pin is at 3
-#define NUM_LEDS 1
+#define NUM_LEDS 3
 
 
 
@@ -39,8 +39,6 @@ int currentLED;           // Needed for assigning the color to the right LED
 
 void setup()
 {
-  Serial.println("Dickbutt");
-
   FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
   FastLED.setBrightness((255 / 100) * BRIGHTNESS );
   pixel_fader.bind(pixel_buffer, leds, NUM_LEDS, FastLED);
@@ -71,7 +69,7 @@ void loop()
 
 
     case STATE_DO_PREFIX:                // *** Processing Prefix ***
-      Serial.println("State DO PREFIX");
+      //Serial.println("State DO PREFIX");
 
       if ( Serial.available() > sizeof(prefix) - 2 )
       {
