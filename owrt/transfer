@@ -1,0 +1,7 @@
+#!/bin/sh
+cd "$(dirname "$(readlink -f "$0")")"
+h=192.168.1.1
+scp -r bin/ $h:/usr/
+scp -r config/ $h:/etc/
+scp -r luci/ $h:/usr/lib/lua/
+echo | ssh $h "cd /usr/bin;chmod +x $(ls bin/)"
