@@ -1,0 +1,6 @@
+[submodule "rgb_firmware_passthrough/FastLed"]
+	path = rgb_firmware_passthrough/FastLed
+	url = https://github.com/FastLED/FastLED.git
+[submodule "rgb_firmware_passthrough/FastFader"]
+	path = rgb_firmware_passthrough/FastFader
+	url = https://github.com/linenoise/FastFader.git
