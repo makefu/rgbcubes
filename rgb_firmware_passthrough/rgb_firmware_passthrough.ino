@@ -35,6 +35,23 @@ int state;                   // Define current state
 int readSerial;           // Read Serial data (1)
 int currentLED;           // Needed for assigning the color to the right LED
 
+// Sets the color of all LEDs in the strand to 'color'
+// If 'wait'>0 then it will show a swipe from start to end
+void setAllLEDs(uint32_t color, int wait)
+{
+  for ( int Counter = 0; Counter < NUM_LEDS; Counter++ )    // For each LED
+  {
+    leds[Counter] = color;
+
+    if ( wait > 0 )                       // if a wait time was set then
+    {
+      FastLED.show();
+      FastLED.delay(wait);                      // and wait before we do the next LED
+    } // if wait
+
+  } // for Counter
+
+} // setAllLEDs
 
 
 void setup()
@@ -127,21 +144,4 @@ void loop()
 } // loop
 
 
-// Sets the color of all LEDs in the strand to 'color'
-// If 'wait'>0 then it will show a swipe from start to end
-void setAllLEDs(uint32_t color, int wait)
-{
-  for ( int Counter = 0; Counter < NUM_LEDS; Counter++ )    // For each LED
-  {
-    leds[Counter] = color;
-
-    if ( wait > 0 )                       // if a wait time was set then
-    {
-      FastLED.show();
-      FastLED.delay(wait);                      // and wait before we do the next LED
-    } // if wait
-
-  } // for Counter
-
-} // setAllLEDs
 

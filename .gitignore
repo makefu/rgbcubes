@@ -7,3 +7,5 @@
 *.swp
 *~
 .vim
+
+rgb_firmware_passthrough/bin/
