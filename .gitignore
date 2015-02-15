@@ -1,0 +1,9 @@
+# git ignore file
+
+# ignore python compiled files
+*.pyc
+
+# ignore vim swp files and gedit temp files
+*.swp
+*~
+.vim
