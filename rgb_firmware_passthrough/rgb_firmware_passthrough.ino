@@ -1,4 +1,3 @@
-
 #include <FastLED.h>
 #include <FastFader.h>
 
@@ -8,61 +7,65 @@
 
 
 
-#define STARTCOLOR 0xFFFFFF  // LED colors at start
-#define BLACK      0x000000  // LED color BLACK
+#define STARTCOLOR 0xFFFFFF
+#define BLACK      0x000000
 
-#define SHOWDELAY  2000       // Delay in micro seconds before showing
-//#define BAUDRATE   460800    // Serial port speed, 460800 tested with Arduino Uno R3
+#define SHOWDELAY  2000       // initial delay
+//#define BAUDRATE   460800
 #define BAUDRATE   115200    // Serial port speed, 460800 tested with Arduino Uno R3
 
-#define BRIGHTNESS 100        // Max. brightness in %
 
-const char prefix[] = {'B', 'U', 'T', 'T'}; // Start prefix
+const char prefix[] = {'B', 'U', 'T','T'}; // Start prefix
 char buffer[sizeof(prefix)]; // Temp buffer for receiving prefix data
 
 
-CRGB leds[NUM_LEDS];
-
-int pixel_buffer[NUM_LEDS][3];
 int px[3];
 FastFader pixel_fader;
 
 int state;                   // Define current state
 #define STATE_WAITING   1    // - Waiting for prefix
 #define STATE_DO_PREFIX 2    // - Processing prefix
-#define STATE_DO_DATA   3    // - Handling incoming LED colors
+#define STATE_DO_CMD 3    // - Processing command
+#define STATE_DO_DATA   4    // - Handling incoming LED colors
 
-int readSerial;           // Read Serial data (1)
+int readSerial;
 int currentLED;           // Needed for assigning the color to the right LED
+
+const int init_num_leds = 20;
+int num_leds = 20;
+
+CRGB leds[init_num_leds];
+CRGB color;
+int pixel_buffer[init_num_leds][3];
+
+int brightness = 100;
+unsigned int trans_speed= 1000;
+unsigned int trans_steps= trans_speed/2;
 
 // Sets the color of all LEDs in the strand to 'color'
 // If 'wait'>0 then it will show a swipe from start to end
-void setAllLEDs(uint32_t color, int wait)
+void setAllLEDs(CRGB c, int wait)
 {
+  px[0] = c.r;
+  px[1] = c.g;
+  px[2] = c.b;
   for ( int Counter = 0; Counter < NUM_LEDS; Counter++ )    // For each LED
   {
-    leds[Counter] = color;
-
-    if ( wait > 0 )                       // if a wait time was set then
-    {
-      FastLED.show();
-      FastLED.delay(wait);                      // and wait before we do the next LED
-    } // if wait
-
+    pixel_fader.set_pixel(Counter,px);
+    pixel_fader.push(wait,wait/2);
   } // for Counter
 
 } // setAllLEDs
 
-
 void setup()
 {
-  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
-  FastLED.setBrightness((255 / 100) * BRIGHTNESS );
-  pixel_fader.bind(pixel_buffer, leds, NUM_LEDS, FastLED);
-  setAllLEDs(BLACK, 0);
-  setAllLEDs(STARTCOLOR, 500);
-
+  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, num_leds);
+  FastLED.setBrightness( brightness );
+  pixel_fader.bind(pixel_buffer, leds, num_leds, FastLED);
   Serial.begin(BAUDRATE);   // Init serial speed
+  setAllLEDs(CRGB::Black, 0);
+  setAllLEDs(CRGB::White, 400);
+  Serial.println("Finish Init");
 
   state = STATE_WAITING;    // Initial state: Waiting for prefix
 }
@@ -86,7 +89,6 @@ void loop()
 
 
     case STATE_DO_PREFIX:                // *** Processing Prefix ***
-      //Serial.println("State DO PREFIX");
 
       if ( Serial.available() > sizeof(prefix) - 2 )
       {
@@ -96,51 +98,99 @@ void loop()
         {
           if ( buffer[Counter] == prefix[Counter + 1] )
           {
-            state = STATE_DO_DATA;     // Received character is in prefix, continue
+            Serial.println("Finished Prefix");
+            state = STATE_DO_CMD;     // Received character is in prefix, continue
             currentLED = 0;            // Set current LED to the first one
           }
           else
           {
-            state = STATE_WAITING;     // Crap, one of the received chars is NOT in the prefix
-            break;                     // Exit, to go back to waiting for the prefix
-          } // end if buffer
-        } // end for Counter
-      } // end if Serial
+            state = STATE_WAITING;
+            break;
+          }
+        }
+      }
       break;
 
+    case STATE_DO_CMD:                   // *** process what cmd to do
+      if (Serial.available() > 0){
+        switch (Serial.read()){
+          case 'S':                      // (S)et LEDS
+            state = STATE_DO_DATA; 
+            break;
+          case 'T':                     // (T)ransition Speed
+            Serial.print("Set transition speed ");
+            while (Serial.available() < 2){ }
+            // read 16 bits
+            trans_speed = ((Serial.read()<< 8) + Serial.read()) ;
+            Serial.print(trans_speed);
+            if (trans_speed){
+              trans_steps = trans_speed/2;
+            }
+            else{
+              trans_steps = 0;
+            }
+            Serial.print(" ");
+            state = STATE_WAITING;
+            Serial.println(trans_steps);
+            break;
+          case 'N':                     // (N)um LEDs
+            Serial.print("Set num leds ");
+            while (Serial.available() < 1){ }
+            num_leds = Serial.read();
+            Serial.println(num_leds,HEX);
+            FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, num_leds);
+            pixel_fader.bind(pixel_buffer, leds, num_leds, FastLED);
+            state = STATE_WAITING;
+            break;
+          case 'I':                     // set Br(I)ghtness - 0-255
+            Serial.print("Set Brightness ");
+            while (Serial.available() < 1){ }
+            brightness = Serial.read();
+            Serial.println(brightness,HEX);
+            FastLED.setBrightness( brightness );
+            FastLED.show();
+            state = STATE_WAITING;
+            break;
+          case 'A':                     // set (A)ll LEDs
+            Serial.println("set All LEDs");
+            while (Serial.available() < 3){
+            }
+            color.r = Serial.read();
+            color.g = Serial.read();
+            color.b = Serial.read();
+            Serial.print(color.r,HEX);
+            Serial.print(color.g,HEX);
+            Serial.println(color.b,HEX);
+
+            setAllLEDs(color,trans_speed);
+            state = STATE_WAITING;
+            break;
+        }
+        
+      }
 
     case STATE_DO_DATA:                  // *** Process incoming color data ***
       if ( Serial.available() > 2 )      // if we receive more than 2 chars
       {
-        
-
         px[0] = Serial.read();
         px[1] = Serial.read();
         px[2] = Serial.read();
 //        Serial.println(px[0]);
 //        Serial.println(px[1]);
 //        Serial.println(px[2]);
-
         pixel_fader.set_pixel(currentLED,px);
-        //FastLED.show();
         currentLED++;
       }
 
       if ( currentLED >= NUM_LEDS )       // Reached the last LED? Display it!
       {
-        pixel_fader.push(1000,500);
-
-        //FastLED.delay(SHOWDELAY);      // Wait a few micro seconds
-        //FastLED.show();
-
-        state = STATE_WAITING;         // Reset to waiting ...
-        currentLED = 0;                // and go to LED one
-
-        break;                         // and exit ... and do it all over again
+        pixel_fader.push(trans_speed,trans_steps);
+        state = STATE_WAITING;
+        currentLED = 0;
+        break;
       }
       break;
   } // switch(state)
-
 } // loop
 
 
