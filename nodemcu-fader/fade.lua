@@ -1,8 +1,4 @@
 
--- api
--- 
-
-
 function log(x)
     n = 1000.0
     return n * ((( x ^( 1/n)) ) - 1)
@@ -32,20 +28,3 @@ function fade_pixel(from_array,to_array,fader_delay,fader_steps)
 end
 
 fade_pixel({{0,0,0},{0,0,0}},{{255,255,255},{255,255,255}},1000,500)
---  for (int current_step = 1; current_step <= fader_steps; current_step++) {
---    // Send this fader step to the LED interface
---    for (int i = 0; i < NumLEDs; i++) {
---      // fader_cache == LEDs 
---      // PixelBuffer == future LEDs
---      LEDs[i] = CRGB(
---      int(((PixelBuffer[i][0] * current_weight) + (fader_cache[i][0] * previous_weight)) / fader_weight),
---      int(((PixelBuffer[i][1] * current_weight) + (fader_cache[i][1] * previous_weight)) / fader_weight),
---      int(((PixelBuffer[i][2] * current_weight) + (fader_cache[i][2] * previous_weight)) / fader_weight)
---      );
---    }
---    FLED.show();
---    // Pause for a fraction of a moment
---    delay(step_delay);
---  }
---  return *this;
---}u
