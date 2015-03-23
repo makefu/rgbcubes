@@ -1,0 +1,40 @@
+function log(x)
+    local n = 1000.0
+    return n * ((( x ^( 1/n)) ) - 1)
+end
+
+function fade_pixel(from_array,to_array,fader_delay,fader_steps)
+  local NumLEDs = #from_array
+  local step_delay = ( fader_delay * 1000 )/ fader_steps
+  local log_base = log(fader_steps)
+  for current_step=1,fader_steps,1 do
+    local previous_weight
+    local current_weight
+    local fader_weight
+    local rgb_arr={{1},{2}}
+    -- this only implements logarithmic decay
+    current_weight = 100 - ( 100 * (log(fader_steps - current_step + 1) / log_base))
+    previous_weight = 100 - ( 100 * (log(current_step) / log_base))
+    fader_weight = current_weight + previous_weight
+    -- send this fader step to the led interface
+    for i=1,NumLEDs,1 do
+      local r = ( ( (to_array[i][1] * current_weight)+(from_array[i][1] * previous_weight) ) / fader_weight )
+      local g = ( ( (to_array[i][2] * current_weight)+(from_array[i][2] * previous_weight) ) / fader_weight )
+      local b = ( ( (to_array[i][3] * current_weight)+(from_array[i][3] * previous_weight) ) / fader_weight )
+      -- rgb_arr[i] = string.char(r,g,b)
+      -- rgb_arr[i] = {r,g,b}
+    end
+    -- ws2812.write(7,table.concat(rgb_arr))
+    if current_step % 200 == 0 then
+        print(table.concat(rgb_arr[1],' '))
+        print(table.concat(rgb_arr[2],' '))
+        print(step_delay)
+        print(node.heap())
+    end
+    -- collectgarbage()
+    tmr.delay(step_delay )
+  end
+    
+end
+
+fade_pixel({{0,0,0},{64,200,0}},{{255,255,255},{128,0,255}},5000,2500)
