@@ -24,27 +24,29 @@ function hsvToRgb(h, s, v)
   end
   return r * 255, g * 255, b * 255
 end
-fader = require('fade')
-fader.loop.on_finished(change_wheel)
+local fader = require('fade')
+fader.looper.on_finished(change_wheel)
 
 -- fast fade to black, then start wheel
-fader.fade_pixel(string.char(0,0,0):rep(numLED),1,1)
+local numLED = 3
+fader.fade(string.char(0,0,0):rep(numLED),100,25)
 
-local numLED = 12
 local hue = 0
 local hue_step= 1/numLED
-local fade_time=2000
-local fade_steps=200
+local fade_time=200
+local fade_steps=100
 function change_wheel()
-  local buffer = ""
+  local buf = ""
   for i=1,numLED,1 do
     -- 1 => max hue value
     local hv=(hue+(i*hue_step))%1
     r,g,b=hsvToRgb(hv,1,1)
     print(i,hv,r,g,b)
-    buffer = buffer .. string.char(r,g,b)
+    buf = buf .. string.char(r,g,b)
   end
   hue = (hue +  hue_step) %1
   print(hue)
-  fader.fade_pixel(buffer,fade_time,fade_steps)
+  fader.fade(buf,fade_time,fade_steps)
 end
+
+return change_wheel
