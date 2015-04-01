@@ -1,5 +1,5 @@
 -- until we can use Math.floor
-function myfloor(n)
+local function myfloor(n)
   return n - (n %1 )
 end
 -- local floor = Math.floor
@@ -7,7 +7,7 @@ local floor = myfloor
 -- stolen from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 -- Assumes h, s, and v are contained in the set [0, 1] and
 -- returns r, g, and b in the set [0, 255].
-function hsvToRgb(h, s, v)
+local function hsvToRgb(h, s, v)
   local r, g, b
   local i = floor(h * 6);
   local f = h * 6 - i;
@@ -24,29 +24,35 @@ function hsvToRgb(h, s, v)
   end
   return r * 255, g * 255, b * 255
 end
-local fader = require('fade')
-fader.looper.on_finished(change_wheel)
-
 -- fast fade to black, then start wheel
 local numLED = 3
-fader.fade(string.char(0,0,0):rep(numLED),100,25)
 
 local hue = 0
-local hue_step= 1/numLED
+local led_step= 1/numLED
+local brightness = 0.2 -- in [0,1]
+local hue_step= 0.01
 local fade_time=200
 local fade_steps=100
-function change_wheel()
+local ledpin=4
+
+local function change_wheel()
   local buf = ""
   for i=1,numLED,1 do
     -- 1 => max hue value
-    local hv=(hue+(i*hue_step))%1
+    local hv=(hue+(i*led_step))%1
     r,g,b=hsvToRgb(hv,1,1)
-    print(i,hv,r,g,b)
-    buf = buf .. string.char(r,g,b)
+    -- print(i,hv,r,g,b)
+    buf = buf .. string.char(r*brightness,g*brightness,b*brightness)
   end
   hue = (hue +  hue_step) %1
-  print(hue)
-  fader.fade(buf,fade_time,fade_steps)
+  -- print(hue)
+  ws2812.writergb(ledpin,buf)
 end
 
-return change_wheel
+local function get_hue()
+  return hue
+end
+local function set_brightness(br)
+  brightness=br
+end
+return {wheel=change_wheel,get_hue=get_hue,set_brightness=set_brightness}
