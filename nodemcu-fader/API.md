@@ -1,34 +1,52 @@
 # API
 
-
-# Modes:
+## single
+static led color, start rgb color for each led
+  
+  GET /all?r=255&g=0&b=128
 
 ## 
 
-## fade
-fade starting from start-color
+# Turn LED off
 
-- fade speed
+    GET /off
 
-## single
-static led color
+# Turn LED on
 
-- start rgb color for each led
+    GET /on
+
+# Brightness
+
+Sets the brightness of the led strip
+
+    GET /brightness?val=128
+
+# ------------- not implemented ---------------------
+
+- persistence and all the things below
+
+# Set Mode
+
+  GET /mode?type=(fade|single)
 
 ## wave
+
+  - wheel.lua
 
 ## russian dance party (nadia)
 blink in different colors
 
+
 ## Knight Rider
+  - knightrider.lua
 
+# Preset LED Color
 
+Presets (when restarting the uC) to the given colors
 
-# set LEDs
+    POST /preset?type=(fade|single)
 
-    POST /set
-
-    <rgb * NumLEDs>
+    (config:<rgb * NumLEDs>)
 
 # Fade LEDs
 
@@ -39,25 +57,15 @@ post data is an array of rgb 3-byte array times the number of leds you want to f
 
     <rgb * NumLEDs>
 
+# set LEDs
 
-# Preset LED Color
+seems to have some problems with 'large' packets which are getting splitted
 
-Presets (when restarting the uC) to the given colors
+    POST /set
 
-    POST /preset?type=(fade|single)
+    <rgb * NumLEDs>
 
-    (config:<rgb * NumLEDs>)
+## fade
+fade starting from start-color
 
-# Turn LED off
-
-    GET /off
-
-# Turn LED on
-
-
-    GET /on
-
-
-# Set Mode
-
-  GET /mode?type=(fade|single)
+- fade speed
