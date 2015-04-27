@@ -1,13 +1,9 @@
--- wifi.setmode(wifi.STATION)
--- wifi.sta.config("127.0.0.1","lolwut8internet")
+srv=net.createServer(net.TCP,1)
 
-srv=net.createServer(net.TCP)
-local f = require('fade')
-local char=string.char
 
-local handle_request=dofile('fun.lua')
-
+local s = require('run_state')
+s.set_state("off")
+local handle_request = require('handle_request')
 srv:listen(80,function(conn) 
     conn:on("receive", handle_request)
 end)
-

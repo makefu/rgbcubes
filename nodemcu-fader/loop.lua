@@ -1,34 +1,55 @@
-local tmr_id=1
-local running=false
-local end_callback=nil
+local Timer ={running=false}
+Timer.__index = Timer
+setmetatable(Timer, {
+  __call = function (cls, ...)
+    return cls.new(...)
+  end,
+})
 
-local function register_end_callback(callback)
-    end_callback= callback
+function Timer.new(ident)
+  local self= setmetatable({},Timer)
+  -- tmr_id defaults to 1
+  if ident then self.tmr_id = ident else self.tmr_id = 1 end
+  return self
 end
 
-local function stop_loop()
-    tmr.stop(tmr_id)
-    if end_callback then end_callback(current_step) end
+function Timer:on_finished(callback)
+    self.end_callback= callback
 end
 
-local function delay_loop(current_step, max_step, increment, delay, callback)
-    if current_step > max_step then 
-        print("finished loop")
-        if end_callback then 
-          print("running callback")
-          end_callback(current_step) 
+function Timer:stop()
+    tmr.stop(self.tmr_id)
+    if self.end_callback then self.end_callback(self.current_step) end
+end
+
+function Timer:loop(current_step, max_step, increment, delay, callback)
+    self.current_step = current_step
+    if (increment > 0 and current_step > max_step) or 
+       (increment < 0 and current_step < max_step) then 
+       if self.end_callback then
+          self.end_callback(self.current_step) 
         end
     else
         callback(current_step)
-        tmr.alarm(tmr_id,delay,function() delay_loop(current_step+increment,max_step,increment,delay,callback) end )
+        tmr.alarm(self.tmr_id,delay,
+          function() self:loop(current_step+increment,max_step,increment,delay,callback) end )
     end
 end
 
-local function get_running()
-    return running
+function Timer:get_running()
+    return self.running
 end
 
-return {
-    on_finished=register_end_callback,
-    start=delay_loop,
-    stop=stop_loop }
+function Timer:get_current_step()
+  return self.current_step
+end
+
+function Timer:get_tmr_id()
+  return self.tmr_id
+end
+
+function Timer:set_tmr_id(ident)
+  self.tmr_id = ident
+end
+
+return Timer

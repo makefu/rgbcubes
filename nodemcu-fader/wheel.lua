@@ -25,12 +25,12 @@ local function hsvToRgb(h, s, v)
   return r * 255, g * 255, b * 255
 end
 -- fast fade to black, then start wheel
-local numLED = 3
+local numLED = 6
 
 local hue = 0
 local led_step= 1/numLED
-local brightness = 0.2 -- in [0,1]
-local hue_step= 0.01
+local brightness = 1 
+local hue_step= 0.002
 local fade_time=200
 local fade_steps=100
 local ledpin=4

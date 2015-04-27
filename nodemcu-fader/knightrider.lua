@@ -1,9 +1,8 @@
 -- init
-local numleds=7
+local numleds=6
 local buffer=string.char(0,0,0):rep(numleds)
--- loop = require('loop')
--- f = require('fade')
-f = {fade=function() end}
+l = require('loop').new(5)
+f = require('fade')
 
 local function decay(val)
   -- maybe even a multiplier and a static value to substract
@@ -15,34 +14,34 @@ local function decay(val)
   end
   buffer = nbuffer
 end
+
 local function refresh(pos, color)
-  buffer = table.concat{buffer:sub(1,pos-1), color, buffer:sub(pos+1)}
+  buffer = table.concat{buffer:sub(1,pos-1), color, buffer:sub(pos+#color)}
 end
 
 local function show()
-  print(buffer:byte(1,#buffer))
+  f.fade(buffer,10,5)
+  
+  print(node.heap())
 end
-
-
 
 local function knightRider(delay,decay_val,color)
-  -- start here
-  for i=0,numleds-1 do
+
+  local function move(i)
     decay(decay_val)
     b=(i*3)+1
-    refresh(b,color:sub(1,1))
-    refresh(b+1,color:sub(2,2))
-    refresh(b+2,color:sub(3,3))
+    refresh(b,color)
     show()
   end
-  -- and back
-  for i=numleds-1,0,-1 do
-    decay(decay_val)
-    b=(i*3)+1
-    refresh(b,color:sub(1,1))
-    refresh(b+1,color:sub(2,2))
-    refresh(b+2,color:sub(3,3))
-    show()
+
+  local function cb_move_down()
+    l:on_finished(function ()
+        knightRider(delay,decay_val,string.char(255,0,0))
+        end)
+    l:loop(numleds-1,0,-1,delay,move)
   end
+  l:on_finished(cb_move_down)
+  l:loop(0,numleds-1,1,delay,move)
+  
 end
-knightRider(10,50,string.char(0,255,0))
+knightRider(100,200,string.char(255,0,0))
