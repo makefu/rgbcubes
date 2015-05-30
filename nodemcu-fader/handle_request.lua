@@ -25,7 +25,6 @@ local function handle_request(client,request)
    client:send("\r\n")
    --  end preprocessing
 
-
    if path == '/fade' then
         
         nbuf = "beginning to fade to " .. data

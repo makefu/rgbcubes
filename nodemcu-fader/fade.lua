@@ -1,7 +1,7 @@
 local tmr = tmr
 local tmrid=1
 local buffer=""
-local pin=3
+local pin=1
 
 local function fade_pixel(to_array,fader_delay,fader_steps)
   local from_array=buffer
@@ -13,7 +13,9 @@ local function fade_pixel(to_array,fader_delay,fader_steps)
     
     if current_step >= fader_steps then
         -- stop self
+        print('stopping timer')
         tmr.stop(tmrid)
+        
     end
     local previous_weight
     local current_weight
@@ -38,9 +40,11 @@ local function fade_pixel(to_array,fader_delay,fader_steps)
     end
     ws2812.write(pin,buffer)
     current_step = current_step + 1
+    tmr.wdclr()
   end
-
+    
   tmr.stop(tmrid)
+  print('begin run_fade')
   tmr.alarm(tmrid,step_delay,1,run_fade)
 
 end
