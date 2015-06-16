@@ -5,10 +5,10 @@ defaults = {
     fade_steps=100,
     numled=16,
     pin=1,
+    mode="off",
     static={ default_color=string.char(0,200,0),
              off=string.char(0,0,0)
-    },
-    fade = {default_color=string.char(0,25,0)}
+    }
 }
 
 state = setmetatable({},{__index=defaults})
@@ -25,17 +25,15 @@ local function apply_brightness(color)
     return ncolor
 end
 
-local function change_state(nstate,data)
+local function run_state(nstate,data)
     --print(state.pin,state.numled,state.brightness)
     if nstate == "on" then
-        fader.fade(apply_brightness(state.static.default_color):rep(state.numled),state.fade_speed,state.fade_steps)  
+        run_state("single",state.static.default_color:rep(state.numled))
 
     elseif nstate == "off" then
+        state.mode=nstate
         fader.fade(apply_brightness(state.static.off):rep(state.numled),state.fade_speed,state.fade_steps)  
         
-    elseif nstate == "fade" then
-        fader.fade(apply_brightness(data),state.fade_speed,state.fade_steps)
-
     elseif nstate == "brightness" then
         if not data then return "failed"  end
         
@@ -44,25 +42,17 @@ local function change_state(nstate,data)
             state.data = state.static.default_color:rep(state.numled)
         end
         data = state.data
-        print("new color"..state.data)
-        print("new brightness"..state.brightness)
-        --ws2812.writergb(state.pin,apply_brightness(state.data):rep(state.numled))
-        fader.fade(apply_brightness(state.data),state.fade_speed,state.fade_steps)  
-    elseif nstate == "static" then
-        if not data then return "failed"  end
-        fader.fade(apply_brightness(data),state.fade_speed,state.fade_steps)
         
-    elseif nstate == "all" then
+        fader.fade(apply_brightness(state.data),state.fade_speed,state.fade_steps)  
+        
+    elseif nstate == "single" then
         if not data then return "failed"  end
+        state.mode=nstate
         fader.fade(apply_brightness(data):rep(state.numled),state.fade_speed,state.fade_steps)
     else
         print("unknown state "..state.." with data "..data)
     end
-    state.current=nstate
     state.data=data
 end
 
-local function get_state()
-    return state,data
-end
-return {set_state=change_state,state=state,defaults=defaults}
+return {run_state=run_state,state=state,defaults=defaults}

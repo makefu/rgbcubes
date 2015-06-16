@@ -13,7 +13,7 @@ local function fade_pixel(to_array,fader_delay,fader_steps)
     
     if current_step >= fader_steps then
         -- stop self
-        print('stopping timer')
+        -- print('stopping timer')
         tmr.stop(tmrid)
         
     end
@@ -44,7 +44,7 @@ local function fade_pixel(to_array,fader_delay,fader_steps)
   end
     
   tmr.stop(tmrid)
-  print('begin run_fade')
+  --print('begin run_fade')
   tmr.alarm(tmrid,step_delay,1,run_fade)
 
 end

@@ -3,17 +3,18 @@
 ## single
 static led color, start rgb color for each led
   
-  GET /all?r=255&g=0&b=128
+  GET /single?r=255&g=0&b=128
 
-## 
 
 # Turn LED off
 
     GET /off
 
 # Turn LED on
+single color mode with a pre-defined color
 
     GET /on
+    
 
 # Brightness
 
@@ -21,9 +22,24 @@ Sets the brightness of the led strip
 
     GET /brightness?val=128
 
+
+
+
 # ------------- not implemented ---------------------
 
-- persistence and all the things below
+# status
+
+Returns the current brightness, mode and color
+
+    GET /status
+    
+    { <content of current config> }
+
+- persistence and all the things below:
+
+# persist settings
+
+  GET /persist?mode=off|single|wheel
 
 # Set Mode
 
@@ -48,24 +64,12 @@ Presets (when restarting the uC) to the given colors
 
     (config:<rgb * NumLEDs>)
 
-# Fade LEDs
-
-post data is an array of rgb 3-byte array times the number of leds you want to fade
-
-
-    POST /fade
-
-    <rgb * NumLEDs>
-
 # set LEDs
 
-seems to have some problems with 'large' packets which are getting splitted
+set all the leds
+seems to have some problems with 'large' packets which are getting splitted, we
+are using the GET
 
-    POST /set
+    GET /set?data=%URL_ENCODED
 
-    <rgb * NumLEDs>
-
-## fade
-fade starting from start-color
-
-- fade speed
+#

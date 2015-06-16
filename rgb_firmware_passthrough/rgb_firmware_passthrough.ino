@@ -1,9 +1,10 @@
 #include <FastLED.h>
 #include <FastFader.h>
 
-#define DATA_PIN 3
+#define CLOCK_PIN 3
+#define DATA_PIN 2
 // RCSwitch pin is at 3
-#define NUM_LEDS 3
+#define NUM_LEDS 100
 
 
 
@@ -31,8 +32,8 @@ int state;                   // Define current state
 int readSerial;
 int currentLED;           // Needed for assigning the color to the right LED
 
-const int init_num_leds = 20;
-int num_leds = 20;
+const int init_num_leds = 100;
+int num_leds = init_num_leds;
 
 CRGB leds[init_num_leds];
 CRGB color;
@@ -59,7 +60,8 @@ void setAllLEDs(CRGB c, int wait)
 
 void setup()
 {
-  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, num_leds);
+  //FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, num_leds);
+  FastLED.addLeds<WS2801, DATA_PIN,CLOCK_PIN, RGB>(leds, num_leds);
   FastLED.setBrightness( brightness );
   pixel_fader.bind(pixel_buffer, leds, num_leds, FastLED);
   Serial.begin(BAUDRATE);   // Init serial speed
@@ -79,6 +81,7 @@ void loop()
 
       if ( Serial.available() > 0 )
       {
+        Serial.println("waiting");
 
         if ( Serial.read() == prefix[0] )   // if this character is 1st prefix char
         {
@@ -182,7 +185,7 @@ void loop()
         currentLED++;
       }
 
-      if ( currentLED >= NUM_LEDS )       // Reached the last LED? Display it!
+      if ( currentLED >= num_leds )       // Reached the last LED? Display it!
       {
         pixel_fader.push(trans_speed,trans_steps);
         state = STATE_WAITING;
