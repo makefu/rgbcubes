@@ -32,7 +32,7 @@ local numLED = 16
 
 
 local hue = 0 -- the current hue value, gets changed by functions
-local brightness = 1 
+local brightness = 1
 local hue_step= 0.002
 
 local ledpin=1
@@ -45,7 +45,7 @@ local function russian_dance_party()
     
     for i=1,numLED,1 do
         r,g,b=hsvToRgb(math.random(),1,1)
-        buf = buf.. string.char(r*brightness,g*brightness,b*brightness)
+        buf = buf.. string.char(g,r,b)
     end
     -- the real party mode!
     --ws2812.writergb(ledpin,buf)
@@ -68,9 +68,9 @@ local blink_on = true
 
 local function blink_white()
     if blink_on then
-        ws2812.writergb(ledpin,string.char(0):rep(3):rep(numLED))
+        ws2812.write(ledpin,string.char(0):rep(3):rep(numLED))
     else 
-        ws2812.writergb(ledpin,string.char(255):rep(3):rep(numLED))
+        ws2812.write(ledpin,string.char(255):rep(3):rep(numLED))
     end
     blink_on = not blink_on
 end
@@ -92,7 +92,7 @@ local function change_wave(color_space,angle)
         for j=1,cols,1 do
             local hv=(angle_hue+(j*led_step))%1
             r,g,b=hsvToRgb(hv,1,1)
-            col_buf = col_buf.. string.char(r*brightness,g*brightness,b*brightness)
+            col_buf = col_buf.. string.char(g,r,b)
         end
         
         if ( current_row % 2 ) == 0 then
@@ -105,7 +105,7 @@ local function change_wave(color_space,angle)
 
     
     hue = (hue +  hue_step) %1
-    ws2812.writergb(ledpin,buf)
+    ws2812.write(ledpin,buf)
     buf=nil
     tmr.wdclr()
 end
