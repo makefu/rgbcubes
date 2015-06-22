@@ -4,18 +4,19 @@ f.set_ledpin(c.state.pin)
 
 local function run_state(nstate,data)
     local state = c.state
+    ws2812.set_brightness(state.brightness)
     --print(state.pin,state.numled,state.brightness)
     if nstate == "on" then
         state.mode=nstate
-        c.current= state.on_color:rep(state.numled)
-        f.fade(c.current,
+        state.current= state.on_color:rep(state.numled)
+        f.fade(state.current,
                state.fade_speed,state.fade_steps)
 
     elseif nstate == "off" then
         state.mode=nstate
-        c.current= state.off_color:rep(state.numled)
+        state.current= state.off_color:rep(state.numled)
         
-        f.fade(c.current,
+        f.fade(state.current,
                     state.fade_speed,state.fade_steps)  
         
     elseif nstate == "brightness" then
@@ -24,21 +25,23 @@ local function run_state(nstate,data)
         state.brightness = data 
         ws2812.set_brightness(data)
         -- if no data is set, then use the default on color
-        if not c.current then
-            c.current = state.on_color:rep(state.numled)
+        if not state.current then
+            state.current = state.on_color:rep(state.numled)
         end
-        f.fade(c.current,
+        f.fade(state.current,
                state.fade_speed,state.fade_steps)  
         
     elseif nstate == "single" then
         if not data then return "failed"  end
         state.mode=nstate
-        c.current=data:rep(state.numled)
-        f.fade(c.current,
+        state.current=data:rep(state.numled)
+        f.fade(state.current,
                    state.fade_speed,state.fade_steps)
     else
-        print("unknown state "..nstate.." with data "..data)
+        print("unknown state "..nstate.." with data "..(data or "NO DATA"))
     end
+    print(state or "no state given")
+    print(state.current or "no current data")
 end
 
 return {run_state=run_state}

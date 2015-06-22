@@ -44,6 +44,12 @@ local function handle_request(client,request)
         s.run_state("single",string.char(g,r,b))
    elseif path == '/status' then
         client:send(cjson.encode(c.state))
+   elseif path == '/save' then
+        c:save()
+        client:send("saved config")
+   elseif path == '/restart' then
+        client:send("bye")
+        node.restart()
    elseif path == '/defaults' then
         client:send(cjson.encode(c.defaults))
    else 
@@ -54,7 +60,7 @@ local function handle_request(client,request)
    collectgarbage()
 end
 
-s.run_state("off")
+s.run_state(c.state.mode,c.state.current)
 
 srv=net.createServer(net.TCP,1)
 srv:listen(80,function(conn) 
