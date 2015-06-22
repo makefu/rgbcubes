@@ -10,7 +10,7 @@ local function handle_request(client,request)
    end
    local _GET = {}
    if (vars ~= nil)then 
-       for k, v in string.gmatch(vars, "(%w+)=(%w+)&*") do 
+       for k, v in string.gmatch(vars, "(%w+)=([%w.]+)&*") do 
            _GET[k] = v 
        end 
    end
@@ -21,7 +21,7 @@ local function handle_request(client,request)
    client:send("\r\n")
    --  end preprocessing
         
-   elseif path == '/on' then
+   if path == '/on' then
         client:send("LEDs are now on")
         s.run_state("on")
         
@@ -31,7 +31,7 @@ local function handle_request(client,request)
    elseif path == '/brightness' then
         if _GET.val then
             local data= _GET.val
-            client:send("setting brighness to "..data)
+            client:send("setting brighyness to "..data)
             s.run_state("brightness",tonumber(data))
         else
             client:send("please provide GET 'val' - cannot set brightness")
@@ -40,8 +40,8 @@ local function handle_request(client,request)
         local r = tonumber(_GET.r or 0)
         local g = tonumber(_GET.g or 0)
         local b = tonumber(_GET.b or 0)
-        client:send("setting LEDS to ("..r..","..g..","..b")")
-        s.run_state("all",string.char(r,g,b))
+        client:send("setting LEDS to ("..r..","..g..","..b..")")
+        s.run_state("single",string.char(g,r,b))
    elseif path == '/status' then
         client:send(cjson.encode(c.state))
    elseif path == '/defaults' then
@@ -50,7 +50,6 @@ local function handle_request(client,request)
         client:send("unknown path "..path)
    end
 
-   client:send(buf)
    client:close()
    collectgarbage()
 end

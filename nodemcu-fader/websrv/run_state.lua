@@ -7,12 +7,15 @@ local function run_state(nstate,data)
     --print(state.pin,state.numled,state.brightness)
     if nstate == "on" then
         state.mode=nstate
-        f.fade(state.on_color:rep(state.numled),
+        c.current= state.on_color:rep(state.numled)
+        f.fade(c.current,
                state.fade_speed,state.fade_steps)
 
     elseif nstate == "off" then
         state.mode=nstate
-        f.fade(state.off_color:rep(state.numled),
+        c.current= state.off_color:rep(state.numled)
+        
+        f.fade(c.current,
                     state.fade_speed,state.fade_steps)  
         
     elseif nstate == "brightness" then
@@ -30,10 +33,11 @@ local function run_state(nstate,data)
     elseif nstate == "single" then
         if not data then return "failed"  end
         state.mode=nstate
-        f.fade(data:rep(state.numled),
+        c.current=data:rep(state.numled)
+        f.fade(c.current,
                    state.fade_speed,state.fade_steps)
     else
-        print("unknown state "..state.." with data "..data)
+        print("unknown state "..nstate.." with data "..data)
     end
 end
 
