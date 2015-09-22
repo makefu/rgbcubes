@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Starter Template for Bootstrap</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.3.0/css/bootstrap-colorpicker.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container text-center" style="width: 75%;" >
+      <div class="starter-template">
+        <h1>tiny smart home</h1>
+        <p class="lead"><a
+           href="http://shackspace.de/wiki/doku.php?id=project:smarthome">Colors</a></p>
+      </div>
+      <div id="demo_cont" class="demo demo-auto inl-bl" data-container="#demo_cont"
+                                                        data-color="rgba(150,216,62,1)"
+                                                        data-inline="true"></div>
+      <button id=sendbutton type="button" class="btn btn-primary btn-lg ">Change the Color!</button>
+      <div id="result"> </div>
+    </div>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.3.0/js/bootstrap-colorpicker.min.js"></script>
+  <script>
+
+$(function(){
+  // global vars ftw
+  color= {r:150,g:216,b:62,a:1}
+  $('.demo').colorpicker().on('changeColor.colorpicker', function(event){
+    color = event.color.toRGB()
+  })
+  $('#sendbutton').click(function() {
+    $.ajax({
+      url: "/color",
+      type: "GET",
+      data: color,
+      success: function(data){
+      }
+    })
+  })
+})
+
+  </script>
+</html>
