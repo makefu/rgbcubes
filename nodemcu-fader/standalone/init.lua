@@ -1,6 +1,13 @@
--- on successful wifi: start the fadesrv
 dofile('wifi.lc')(
+  -- onSuccess
   function ()
-    dofile('fadesrv.lc')
+    print('completed')
+    dofile('mybox.lc')
+    dofile('fadesrv.lua')
   end,
-  node.restart)
+  -- onFailure
+  function ()
+    node.restore()
+    node.restart()
+  end
+  )

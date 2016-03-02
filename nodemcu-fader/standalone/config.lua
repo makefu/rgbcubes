@@ -4,13 +4,12 @@ M.conf="config.json"
 
 M.defaults = {
     brightness = 1,
-    fade_speed=1000,
-    fade_steps=100,
+    fadedelay=1000,
     numled=3,
     pin=1,
     mode="off",
-    off_color=string.char(0,0,0),
-    on_color=string.char(0,200,0),
+    off_color={0,0,0},
+    on_color={0,200,0},
     wifi_ssid='shack',
     wifi_pw='shackers'
 }
@@ -19,7 +18,7 @@ M.defaults = {
 function M:save()
     local tmp_index = self.state.__index
     self.state.__index = nil
-    --print("saving config")
+    print("saving config")
     file.open(self.conf,"w+")
     file.write(cjson.encode(self.state))
     file.close()
@@ -31,11 +30,11 @@ function M:load()
     if pcall(function()
         file.open(self.conf)
         self.state = setmetatable(cjson.decode(file.read()),{__index=self.defaults})
-        --print("found config to load")
+        print("found config to load")
     end ) then
     else
-        --print("unable to load config, using default")
-        self.state = setmetatable({},{__index=self.defaults})     
+        print("unable to load config, using default")
+        self.state = setmetatable({},{__index=self.defaults})
     end
     collectgarbage()
 end
