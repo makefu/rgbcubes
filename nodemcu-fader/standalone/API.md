@@ -3,7 +3,7 @@
 ## single
 static led color, start rgb color for each led
   
-  GET /single?r=255&g=0&b=128
+  GET /color?r=255&g=0&b=128
 
 
 # Turn LED off
@@ -15,13 +15,20 @@ single color mode with a pre-defined color
 
     GET /on
     
+# Restart
 
-# Brightness
+    GET /restart
 
-Sets the brightness of the led strip
+# Save
+Save current configuration
 
-    GET /brightness?val=128
+    GET /save
 
+# fadedelay
+sets the time needed for a fade from one color to another. this config will be
+persisted with `/save`
+
+    GET /fadedelay?ms=<delay-in-milliseconds>
 
 
 
