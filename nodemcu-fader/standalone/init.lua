@@ -3,6 +3,7 @@ dofile('wifi.lc')(
   function ()
     print('completed')
     dofile('mybox.lc')
+    dofile('pir_trigger.lua')
     dofile('fadesrv.lua')
   end,
   -- onFailure

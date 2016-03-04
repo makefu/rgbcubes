@@ -1,12 +1,15 @@
 local M = {}
+c = require('config')
 local tmrid = 1
 local fade_delay = 2000
 local fade_steps = fade_delay / 10
 local currentBuffer = nil
 
 function M.init(numLed)
+  -- init will create a new buffer and fill it with the off color
   currentBuffer = ws2812.newBuffer(numLed)
-  currentBuffer:fill(0,0,0)
+  local off = c.state.off_color
+  currentBuffer:fill(off[2],off[1],off[3])
   currentBuffer:write(4)
 end
 
@@ -19,7 +22,22 @@ function M.set_delay(delay)
   fade_steps = delay / 10
 end
 
+function M:fade_color(rgb)
+  -- fades to a single color
+  -- rgb = {r,g,b}
+  local nb = ws2812.newBuffer(c.state.numled)
+  r = rgb[1]
+  g = rgb[2]
+  b = rgb[3]
+  nb:fill(g,r,b)
+  self.fade(nb)
+end
+
 function M.fade(nextBuffer)
+  if not currentBuffer then
+    print("ERROR: run <fade>.init(numle) first")
+    return
+  end
   local size = currentBuffer:size()
   local firstBuffer = ws2812.newBuffer(size)
 

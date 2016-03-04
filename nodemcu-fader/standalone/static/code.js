@@ -107,6 +107,20 @@ $(function () {
             type: "GET"
         })
     })
+    $('#normalModeButton').click(function () {
+        $.ajax({
+            url: "/mode",
+            data: { "id": "normal" },
+            type: "GET"
+        })
+    })
+    $('#pirModeButton').click(function () {
+        $.ajax({
+            url: "/mode",
+            data: { "id": "pir" },
+            type: "GET"
+        })
+    })
 })
 function updateColor(event) {
   //touch position
