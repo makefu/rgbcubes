@@ -95,6 +95,12 @@ $(function () {
             type: "GET"
         })
     })
+    $('#restartButton').click(function () {
+        $.ajax({
+            url: "/restart",
+            type: "GET"
+        })
+    })
     $('#onButton').click(function () {
         $.ajax({
             url: "/on",
@@ -114,10 +120,17 @@ $(function () {
             type: "GET"
         })
     })
-    $('#pirModeButton').click(function () {
+    $('#fadeModeButton').click(function () {
         $.ajax({
             url: "/mode",
-            data: { "id": "pir" },
+            data: { "id": "fade" },
+            type: "GET"
+        })
+    })
+    $('#partyModeButton').click(function () {
+        $.ajax({
+            url: "/mode",
+            data: { "id": "party" },
             type: "GET"
         })
     })

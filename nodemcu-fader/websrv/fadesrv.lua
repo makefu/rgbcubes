@@ -5,26 +5,26 @@ local s = require('run_state')
 
 local function handle_request(client,request)
    local _, _, method, path, vars = string.find(request, "([A-Z]+) (.+)?(.+) HTTP");
-   if(method == nil)then 
-       _, _, method, path = string.find(request, "([A-Z]+) (.+) HTTP"); 
+   if(method == nil)then
+       _, _, method, path = string.find(request, "([A-Z]+) (.+) HTTP");
    end
    local _GET = {}
-   if (vars ~= nil)then 
-       for k, v in string.gmatch(vars, "(%w+)=([%w.]+)&*") do 
-           _GET[k] = v 
-       end 
+   if (vars ~= nil)then
+       for k, v in string.gmatch(vars, "(%w+)=([%w.]+)&*") do
+           _GET[k] = v
+       end
    end
-   
+
    client:send("HTTP/1.1 200 OK\r\n")
    client:send("Content-Type: text/html\r\n")
    client:send("Connection: close\r\n")
    client:send("\r\n")
    --  end preprocessing
-        
+
    if path == '/on' then
         client:send("LEDs are now on")
         s.run_state("on")
-        
+
    elseif path == '/off' then
         buf = "LEDs are now off"
         s.run_state("off")
@@ -52,7 +52,7 @@ local function handle_request(client,request)
         node.restart()
    elseif path == '/defaults' then
         client:send(cjson.encode(c.defaults))
-   else 
+   else
         client:send("unknown path "..path)
    end
 
@@ -63,6 +63,6 @@ end
 s.run_state(c.state.mode,c.state.current)
 
 srv=net.createServer(net.TCP,1)
-srv:listen(80,function(conn) 
+srv:listen(80,function(conn)
     conn:on("receive", handle_request)
 end)

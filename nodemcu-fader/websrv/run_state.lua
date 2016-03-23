@@ -40,8 +40,8 @@ local function run_state(nstate,data)
     else
         print("unknown state "..nstate.." with data "..(data or "NO DATA"))
     end
-    print(state or "no state given")
-    print(state.current or "no current data")
+    --print(state or "no state given")
+    --print(state.current:byte(1,3) or "no current data")
 end
 
 return {run_state=run_state}

@@ -8,18 +8,18 @@ local function fade_pixel(to_array,fader_delay,fader_steps)
   local NumLEDs = #to_array
   local current_step=1
   local step_delay = fader_delay / fader_steps
-  
+
   local function run_fade()
-    
+
     if current_step >= fader_steps then
         -- stop self
         -- print('stopping timer')
         tmr.stop(tmrid)
-        
+
     end
     local previous_weight
     local current_weight
-    
+
     -- this only implements logarithmic decay
     previous_weight = 100 * (fader_steps - current_step);
     current_weight = 100 * (current_step - 1);
@@ -42,7 +42,7 @@ local function fade_pixel(to_array,fader_delay,fader_steps)
     current_step = current_step + 1
     tmr.wdclr()
   end
-    
+
   tmr.stop(tmrid)
   --print('begin run_fade')
   tmr.alarm(tmrid,step_delay,1,run_fade)

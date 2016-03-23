@@ -19,5 +19,5 @@ local function check_alarm ()
 end
 
 -- print("Enabling PIR on pin "..pir_pin)
-tmr.alarm(6,c.state.pir_timeout or c.state.fadedelay or 5000,tmr.ALARM_AUTO,check_alarm)
+tmr.alarm(6,c.state.pir_timeout  or 250,tmr.ALARM_AUTO,check_alarm)
 

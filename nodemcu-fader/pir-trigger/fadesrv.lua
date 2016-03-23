@@ -74,12 +74,10 @@ local function handle_request(client,request)
    elseif path == '/code.js' then
         send_file('static/code.js')
    elseif path == '/on' then
-        local nb = ws2812.newBuffer(c.state.numled)
         f:fade_color(c.state.on_color)
         add("LEDs are now on")
    elseif path == '/off' then
         -- TODO
-        local nb = ws2812.newBuffer(c.state.numled)
         f:fade_color(c.state.off_color)
         add("LEDs are now off")
    elseif path == '/save' then
@@ -90,6 +88,11 @@ local function handle_request(client,request)
         add("setting fade delay to ".. delay)
         f.set_delay(delay)
         c.state.fadedelay = delay
+   elseif path == '/numled' then
+        local numled =  tonumber(_GET.v or c.state.numled)
+        add("setting numled to ".. numled)
+        f.init(numled)
+        c.state.numled = numled
    elseif path == '/mode' then
         local mode =  _GET.id or "single"
         add("setting mode delay to ".. mode)

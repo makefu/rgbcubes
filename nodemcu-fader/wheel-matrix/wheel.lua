@@ -1,6 +1,6 @@
 
 
-local numLED = 16
+local numLED = 12
 
 
 local hue = 0 -- the current hue value, gets changed by functions
@@ -8,8 +8,8 @@ local brightness = 1
 local hue_step= 0.002
 
 local ledpin=4
-local cols=4
-local rows=4
+local cols=2
+local rows=3
 local fader = require('fade')
 fader.set_ledpin(ledpin)
 
@@ -48,6 +48,13 @@ local function blink_white()
     blink_on = not blink_on
 end
 
+local function change_wave_single()
+    r,g,b=ws2812.hsv2rgb(hue,1,1)
+    buf = string.char(g,r,b):rep(numLED)
+    hue = (hue +  hue_step) %1
+    ws2812.write(ledpin,buf)
+    buf = nil
+end
 local function change_wave(color_space,angle)
     -- angle: the angle to the left
     if not angle then angle = 0 end
@@ -108,6 +115,7 @@ end
 
 return {wheel=change_wheel,
         wave=change_wave,
+        single=change_wave_single,
         blink_white=blink_white,
         russian_dance_party=russian_dance_party,
         get_hue=get_hue}

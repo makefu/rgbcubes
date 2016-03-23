@@ -1,5 +1,6 @@
 var canvas = document.getElementById("colorPicker");
-canvas.addEventListener("touchstart", doTouch);
+// TODO trigger all the time, locking is implemented
+// canvas.addEventListener("touchstart", doTouch);
 canvas.addEventListener("click", doClick);
 
 var context = canvas.getContext('2d');
@@ -44,20 +45,30 @@ function getMousePos(canvas, evt) {
         y: evt.clientY - rect.top
     };
 }
-
+function debug(text){
+  document.getElementById('status').innerHTML = "<br>" + text
+}
+var changeLock = false
 function changeColor(color) {
     var colordata = {
         r: color[0],
         g: color[1],
         b: color[2]
     }
-
-    $.ajax({
-        url: "/color",
-        type: "GET",
-        data: colordata,
-        success: function (data) {}
-    })
+    if (changeLock) {
+      // DEBUG:
+      debug("DEBUG: led currently changing, please wait")
+    } else {
+      changeLock = true
+      $.ajax({
+          url: "/color",
+          type: "GET",
+          data: colordata,
+          success: function (data) {
+              changeLock = false
+          }
+      })
+    }
 }
 
 function doTouch(event) {
@@ -67,7 +78,7 @@ function doTouch(event) {
         y: Math.round(event.targetTouches[0].pageY - canvas.offsetTop)
     };
     var color = context.getImageData(pos.x, pos.y, 1, 1).data;
-    document.getElementById('status').innerHTML = "<br>color: " + color + " - " + "<br>x: " + pos.x + " - y: " + pos.y + " - offset: " + canvas.offsetLeft + "/" + canvas.offsetTop;
+    debug("color: " + color + " - " + "<br>x: " + pos.x + " - y: " + pos.y + " - offset: " + canvas.offsetLeft + "/" + canvas.offsetTop);
     changeColor(color);
 }
 
@@ -78,22 +89,64 @@ function doClick(event) {
 }
 
 $(function () {
-    $('#windButton').click(function () {
+    $('#saveButton').click(function () {
         $.ajax({
-            url: "/windrad",
+            url: "/save",
             type: "GET"
         })
     })
-    $('#openDoorButton').click(function () {
+    $('#restartButton').click(function () {
         $.ajax({
-            url: "/door/open",
+            url: "/restart",
             type: "GET"
         })
     })
-    $('#closeDoorButton').click(function () {
+    $('#onButton').click(function () {
         $.ajax({
-            url: "/door/close",
+            url: "/on",
+            type: "GET"
+        })
+    })
+    $('#offButton').click(function () {
+        $.ajax({
+            url: "/off",
+            type: "GET"
+        })
+    })
+    $('#normalModeButton').click(function () {
+        $.ajax({
+            url: "/mode",
+            data: { "id": "normal" },
+            type: "GET"
+        })
+    })
+    $('#pirModeButton').click(function () {
+        $.ajax({
+            url: "/mode",
+            data: { "id": "pir" },
             type: "GET"
         })
     })
 })
+function updateColor(event) {
+  //touch position
+  var pos = {
+    x: Math.round(event.targetTouches[0].pageX-canvas.offsetLeft),
+    y: Math.round(event.targetTouches[0].pageY-canvas.offsetTop)
+  };
+  //color
+  var color = context.getImageData(pos.x, pos.y, 1, 1).data;
+  debug ("changing to"+ color)
+  changeColor(color);
+}
+
+$("#colorPicker").swipe( {
+  //Generic swipe handler for all directions
+  swipeStatus:function(event, phase, direction, distance, fingerCount) {
+    var str = "";
+    switch (phase) {
+      case "move" : updateColor(event); break;
+    }
+  },
+  threshold:10
+});
