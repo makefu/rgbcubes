@@ -1,0 +1,8 @@
+NodeMCU custom build by frightanic.com
+	branch: dev
+	commit: 2b53e8db5955ce40ea53ee355987f6647df671e5
+	SSL: false
+	modules: cjson,enduser_setup,file,gpio,i2c,net,node,tmr,uart,wifi,ws2812
+ build 	built on: 2016-02-22 18:22
+ powered by Lua 5.1.4 on SDK 1.5.1(e67da894)
+found config to load
