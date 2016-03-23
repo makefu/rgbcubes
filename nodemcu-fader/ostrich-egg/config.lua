@@ -3,14 +3,14 @@ M.conf="config.json"
 --M.data : may be used in other functions
 
 M.defaults = {
-    brightness = 1,
+    brightness = 30,
     fadedelay=1000,
     numled=3,
     pin=1,
     mode="off",
     off_color={0,0,0},
     on_color={0,200,0},
-	-- ?
+	-- what is this?
     wifi_ssid='shack',
     wifi_pw='shackers'
 }

@@ -6,9 +6,7 @@ static led color, start rgb color for each led
   GET /color?r=255&g=0&b=128
   
 ## brightness
-// not yet implemented
   GET /brightness?brightness=50
-
   
 # Turn LED off
 

@@ -22,10 +22,6 @@ function M.set_delay(delay)
   fade_steps = delay / 10
 end
 
-function M.set_brightness(brightness)
-  brightness = brightness/100
-end
-
 function M:fade_color(rgb)
   -- fades to a single color
   -- rgb = {r,g,b}

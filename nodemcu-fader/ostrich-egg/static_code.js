@@ -144,15 +144,15 @@ $(function () {
 			changeLock = true
 			$.ajax({
 				url: "/brightness",
-				data: { "id": "brightness" },
+				data: { "brightness": value },
 				type: "GET",
 				success: function (data) {
-					debug("brightness changed")
+					debug("brightness changed to" + value)
 					changeLock = false
 				}
 			})
 		}
-		//return 'Current value: ' + value;
+		return 'Current value: ' + value;
 	}})
 })
 function updateColor(event) {

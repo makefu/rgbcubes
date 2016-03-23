@@ -115,12 +115,18 @@ local function handle_request(client,request)
         local r = tonumber(_GET.r or 0)
         local g = tonumber(_GET.g or 0)
         local b = tonumber(_GET.b or 0)
+		-- this can be done better
+		r = math.floor(r/100*c.state.brightness, 0)
+		g = math.floor(g/100*c.state.brightness, 0)
+		b = math.floor(b/100*c.state.brightness, 0)
+		
         c.state.on_color = {r,g,b}
         add("setting LEDS to ("..r..","..g..","..b..")")
         f:fade_color(c.state.on_color)
     elseif path == '/brightness' then
-        local brightness = tonumber(_GET.brightness or 1)
-		f.set_brightness(brightness)
+        local brightness = tonumber(_GET.brightness or 100)
+		c.state.brightness = brightness
+	    -- implement actually changing brightness
         add("setting brightness to "..brightness)
    elseif path == '/restart' then
         add("bye")

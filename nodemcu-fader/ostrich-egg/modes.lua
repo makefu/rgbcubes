@@ -27,7 +27,6 @@ local function hsv2rgb(h,s,v)
 end
 
 
-
 local function russian_dance_party()
     -- todo change delay
     f.set_delay(100)
