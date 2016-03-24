@@ -46,7 +46,7 @@ function getMousePos(canvas, evt) {
     };
 }
 function debug(text){
-  document.getElementById('status').innerHTML = "<br>" + text
+  //document.getElementById('status').innerHTML = "<br>" + text
 }
 var changeLock = false
 function changeColor(color) {
@@ -89,7 +89,6 @@ function doClick(event) {
 }
 
 $(function () {
-
     $('#saveButton').click(function () {
         $.ajax({
             url: "/save",
@@ -135,11 +134,12 @@ $(function () {
             type: "GET"
         })
     })
-	$('#brightness').slider({formatter:function (value) {
-			//debug(changeLock+value)
+	$("#brightness").slider();
+	$("#brightness").on("change", function(slideEvt) {
+		value = slideEvt.value.newValue
 		if (changeLock) {
 			// DEBUG:
-			debug("already changing brightness")
+			debug("already changing brightness" + value)
 		} else {
 			changeLock = true
 			$.ajax({
@@ -152,8 +152,8 @@ $(function () {
 				}
 			})
 		}
-		return 'Current value: ' + value;
-	}})
+	});
+
 })
 function updateColor(event) {
   //touch position

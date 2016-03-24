@@ -3,7 +3,7 @@ M.conf="config.json"
 --M.data : may be used in other functions
 
 M.defaults = {
-    brightness = 30,
+    brightness = 100,
     fadedelay=1000,
     numled=3,
     pin=1,

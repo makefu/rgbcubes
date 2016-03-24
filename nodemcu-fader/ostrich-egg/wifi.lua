@@ -4,6 +4,7 @@ return function(onSuccess, onFailure)
   local function fallbackAP()
     print("starting enduser")
     ws2812.write(1,string.char(0,0,0))
+	-- turn the led red (status indicator enduser)
     ws2812.write(1,string.char(0,255,0))
     enduser_setup.start()
   end
