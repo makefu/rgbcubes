@@ -1,3 +1,0 @@
-config colors 'colors'
-  option mode 'rainbow'
-  option enabled '0'

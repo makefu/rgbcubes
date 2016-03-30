@@ -1,9 +1,0 @@
-[submodule "rgb_firmware_passthrough/Arduino-Makefile"]
-	path = rgb_firmware_passthrough/Arduino-Makefile
-	url = https://github.com/sudar/Arduino-Makefile.git
-[submodule "rgb_firmware_passthrough/lib/FastFader"]
-	path = rgb_firmware_passthrough/lib/FastFader
-	url = https://github.com/linenoise/FastFader.git
-[submodule "rgb_firmware_passthrough/lib/FastLED"]
-	path = rgb_firmware_passthrough/lib/FastLED
-	url = https://github.com/FastLED/FastLED.git
