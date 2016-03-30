@@ -6,10 +6,6 @@ c = require('config')
 f = require('fade')
 m = require('modes')
 
-print("fadesrv:debug: init")
-f.init(c.state.numled)
-f.set_delay(c.state.fadedelay)
-f:fade_color(c.state.on_color)
 
 local function change_mode(mode)
   c.state.mode = mode
@@ -25,6 +21,14 @@ local function change_mode(mode)
     f.set_delay(c.state.fadedelay)
   end
 end
+
+print("fadesrv:debug: init")
+f.init(c.state.numled)
+f.set_delay(c.state.fadedelay)
+f:fade_color(c.state.on_color)
+
+change_mode(c.state.mode)
+
 local function handle_request(client,request)
    -- print("fadesrv:debug: got connection")
    local response = {

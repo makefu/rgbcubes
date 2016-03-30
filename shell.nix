@@ -57,5 +57,6 @@ in pkgs.stdenv.mkDerivation rec {
   ];
     shellHook =''
       HISTFILE="$PWD/.histfile"
+      alias nodemcu-uploader="nodemcu-uploader --start_baud 115200"
     '' ;
 }

@@ -116,7 +116,7 @@ $(function () {
     $('#normalModeButton').click(function () {
         $.ajax({
             url: "/mode",
-            data: { "id": "normal" },
+            data: { "id": "single" },
             type: "GET"
         })
     })
