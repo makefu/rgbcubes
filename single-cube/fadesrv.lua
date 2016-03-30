@@ -4,6 +4,8 @@
 -- ledpin
 c = require('config')
 f = require('fade')
+m = require('modes')
+
 print("fadesrv:debug: init")
 f.init(c.state.numled)
 f.set_delay(c.state.fadedelay)
@@ -13,10 +15,10 @@ local function change_mode(mode)
   c.state.mode = mode
   if mode == "single" then
     print("change_mode: doing nothing")
+    tmr.stop(6)
   elseif mode == "fade" then
     print("change_mode: fade mode")
-
-    local speed = c.state.fadedelay
+    local speed = c.state.mode_delay or 250
     tmr.alarm(6,speed,1,function () m.wave() end)
   elseif mode == "party" then
     print("change_mode: party mode")
@@ -111,6 +113,7 @@ local function handle_request(client,request)
    elseif path == '/mode' then
         local mode =  _GET.id or "single"
         add("setting mode delay to ".. mode)
+        change_mode(mode)
    elseif path == '/color' then
         local r = tonumber(_GET.r or 0)
         local g = tonumber(_GET.g or 0)

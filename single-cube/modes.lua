@@ -1,4 +1,3 @@
-local numLED = 12
 local hue = 0 -- the current hue value, gets changed by functions
 local hue_step = 0.002
 
