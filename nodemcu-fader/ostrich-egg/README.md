@@ -13,6 +13,12 @@ Uses http configuraiton if wifi does not come up.
 
 see API.md
 
+# Firmware
+get your nodemcu firmware e.g. from here http://nodemcu-build.com/
+serial speed: 115200
+
+ws2812 led is connected to GPIO2
+
 # uploading and dependencies
 
 with esplorer, upload the following files and run `node.compile(<file>)`:

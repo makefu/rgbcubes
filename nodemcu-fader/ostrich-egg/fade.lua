@@ -35,8 +35,8 @@ end
 
 function M:adjust_brightness(color)
  -- change the brightness of a single color
+ -- compensate for non-linear brightness
 	color = math.floor(color/100*(c.state.brightness^3/10000), 0)
-	print (c.state.brightness)
 	return color
 end
 
