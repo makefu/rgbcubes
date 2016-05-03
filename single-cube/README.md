@@ -17,9 +17,16 @@ see API.md
 get your nodemcu firmware e.g. from here http://nodemcu-build.com/
 serial speed: 115200
 
-ws2812 led is connected to GPIO2
+ws2812 led is connected to GPIO2 (nodemcu Index D4)
+The following modules are required: `bit cjson end_user_setup file gpio net node timer uart wifi ws2812`
 
 # uploading and dependencies
+# nodemcu-uploader
+
+    nodemcu-uploader upload --compile *.lua
+    nodemcu-uploader upload *.html *.js init.lua
+
+# Esplorer
 
 with esplorer, upload the following files and run `node.compile(<file>)`:
 

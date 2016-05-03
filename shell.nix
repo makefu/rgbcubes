@@ -33,12 +33,13 @@ let
       version = "0.1.0";
       propagatedBuildInputs = with pkgs;[
         python2Packages.pyserial
+        python2Packages.flake8
       ];
       src = pkgs.fetchFromGitHub {
         owner = "themadinventor";
         repo = "esptool";
         rev = "master";
-        sha256 = "09gxrk3jky3lx4j4qfsimx8z4irw7ii54c5va2cvx8r5hcs4hav2";
+        sha256 = "0hqqkxr4i6wc4234rzr0brrlykb0rs9bgnhy5lz8hiq45nahgcid";
       };
       doCheck = false;
   };
