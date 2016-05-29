@@ -1,0 +1,4 @@
+cd src/
+function upl(){ nodemcu-uploader --start_baud 115200 upload $@ ;}
+upl --compile *.lua
+upl *.html static_code.js  init.lua
