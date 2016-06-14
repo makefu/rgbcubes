@@ -1,5 +1,4 @@
 local hue = 0 -- the current hue value, gets changed by functions
-local hue_step = 0.002
 
 local f = require('fade')
 local c = require('config')
@@ -33,11 +32,6 @@ local function russian_dance_party()
     f:fade_color( hsv2rgb(math.random(),1,1) )
 end
 
-local function change_wave_single()
-    rgb=hsv2rgb(hue,1,c.state.brightness / 100 )
-    f:fade_color( rgb )
-    hue = (hue + hue_step) %1
-end
 
 local function get_hue()
   return hue
