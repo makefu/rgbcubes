@@ -11,6 +11,7 @@ dofile('wifi.lc')(
     print('completed')
     dofile('mybox.lc')
     dofile('fadesrv.lc')
+    dofile('gettime.lc').schedule()
   end,
   -- onFailure
   function ()
