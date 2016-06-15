@@ -40,13 +40,17 @@ local function sync_time()
 end
 
 
--- implements https://stackoverflow.com/questions/5590429/calculating-daylight-saving-time-from-only-date
+-- Central Europe (Germany):
+--   Begin DST: last sunday in march
+--   End   DST: last sunday in october
 local function isDST(day,month,dow)
-  if (month < 3 or month > 11 ) then return false end
-  if (month > 3 and month < 11 ) then return true end
-  local previousSunday = day - dow;
-  if (month == 3) then return previousSunday >= 8 end
-  return previousSunday <= 0
+  if (month < 3 or month > 10 ) then return false end
+  if (month > 3 and month < 10 ) then return true end
+  lastSunday = day - dow
+  -- 31 days in march and october:
+  --  last sunday must be between 31 and 24
+  if (month == 3) then return (lastSunday >= 25) end
+  return (lastSunday < 25)
 end
 
 -- return h, m, s, Y, M, D, W (0-sun, 6-sat)
