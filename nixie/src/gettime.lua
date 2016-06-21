@@ -9,18 +9,37 @@ local seconds = 0
 local year = 1970
 local month = 1
 local day = 1
--- local floor = math.floor
+
+local id = 0
+local disp = nil
 
 -- we retrieve our current timezone offset
-local ntpserver = "time.nist.gov"
-local function init()
-  print("init display")
+-- local ntpserver = "time.nist.gov"
+local ntpserver = "pool.ntp.org"
+
+local function write_ic(dev_addr,value)
+    i2c.start(id)
+    i2c.address(id, dev_addr, i2c.TRANSMITTER)
+    i2c.write(id, value)
+    i2c.stop(id)
+end
+
+local function init_nixie()
+  local sda = 3
+  local scl = 4
+  i2c.setup(id, sda, scl, i2c.SLOW)
+end
+
+local function init_display(soft)
+  -- print("init display")
   local sda = 1
   local scl = 2
   local sla = 0x3c
   i2c.setup(0, sda, scl, i2c.SLOW)
-  disp = u8g.ssd1306_128x64_i2c(sla)
-  disp:setFont(u8g.font_6x10)
+  if not soft then
+    disp = u8g.ssd1306_128x64_i2c(sla)
+    disp:setFont(u8g.font_6x10)
+  end
 end
 
 
@@ -76,18 +95,42 @@ local function refresh_data()
   hour,min,seconds,year,month,day,_ = unix2date(sec + (tz * 3600))
 end
 
+local function refresh_nixie()
+  -- print(string.format("%x -> %d",seconds_addr, seconds) )
+
+  -- smallest address is first second char
+  local r = string.format("%02d%02d%02d",hour,min,seconds):reverse()
+  for i = 1, #r do
+  -- for i = 1, 1 do
+    local c = string.byte(r:sub(i,i)) - 48 -- - "0"
+    if seconds %2 == 0 then
+      c = c + 0x10
+    end
+    -- local i_addr = i
+    local i_addr = 0x0F + i
+    write_ic(i_addr,c)
+    -- tmr.delay(50000)
+  end
+
+end
+
 local function show()
-  if not disp then init() end
   refresh_data()
+
+  -- display code
+  init_display(disp)
   disp:firstPage()
   repeat draw()
   until disp:nextPage() == false
+
+  init_nixie()
+  refresh_nixie()
 end
 
 local function schedule(tid)
-  tmr.alarm(tid or 6, 500, tmr.ALARM_AUTO,function() show() end)
+  sync_time()
+  tmr.alarm(tid or 6, 1000, tmr.ALARM_AUTO,function() show() end)
 end
 
-sync_time()
 
-return {init=init,sync=sync_time,show=show,schedule=schedule}
+return {init_display=init_display,init_nixie=init_nixie,sync=sync_time,show=show,schedule=schedule}
