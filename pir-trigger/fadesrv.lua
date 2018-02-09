@@ -104,6 +104,8 @@ local function handle_request(client,request)
         c.state.on_color = {r,g,b}
         add("setting LEDS to ("..r..","..g..","..b..")")
         f:fade_color(c.state.on_color)
+   elseif path == '/getcolor' then
+        add(cjson.encode(c.state.on_color))
    elseif path == '/restart' then
         add("bye")
         node.restart()
